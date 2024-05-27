@@ -4,21 +4,40 @@
 
 {% block body %}
     <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     </style>
 
     <div class="example-wrapper">
-        <h1>Listes des recettes! ✅</h1>
-        <ul>
+        <h1>Listes des recettes! </h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Discover</th>
+                    <th scope="col">Editer</th>
+                    <th scope="col">Supprimer</th>
+                </tr>
+            </thead>
             {% for recipe in recipes %}
-            <li>
-                <span> Recette {{ recipe.id }} ====> </span>
-                <a href="{{ path('recipe.show', {'id': recipe.id, 'slug': recipe.slug}) }}"> {{ recipe.name }}</a>
-            </li>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{recipe.id}}</th>
+                        <td>{{recipe.title}}</td>
+                        <td><a class="btn btn-primary" href="{{ path('recipe.show', {'id': recipe.id, 'slug': recipe.slug}) }}"> See Recipe </a></td>
+                        <td>
+                            <form action="{{ path('recipe-delete', {'id': recipe.id}) }}" method="post"> 
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <input type="hidden" name="_method" value="DELETE">
+                            </form>
+                    </td>
+                        <td><a class="btn btn-secondary" href="{{ path('recipe-edit', {'id': recipe.id}) }}"> Edit</a></td>
+                    </tr>
+                </tbody>
             {% endfor %}
-        </ul>
-        <a href="{{ url('home') }}">Back to home</a>
+        </table>
+        <a class="btn btn-primary" href="{{ path('recipe-create') }}">Nouvelle recette</a>
+        
     </div>
 {% endblock %}
 
