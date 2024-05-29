@@ -81,4 +81,6 @@ public function index(Request $request, RecipeRepository $recipeRepository,Entit
         $this->addFlash('success', 'Recipe deleted');
         return $this->redirectToRoute('recipes.list');
     }
+
+
 }
