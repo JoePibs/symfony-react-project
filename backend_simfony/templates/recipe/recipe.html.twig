@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Recette {{ slug }}! ✅{% endblock %}
+{% block title %}Recette {{ recipe.title }}! ✅{% endblock %}
 
 {% block body %}
     <style>
@@ -9,12 +9,9 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Recette <span class="badge text-bg-secondary">{{ slug }}! ✅</span></h1>
+        <h1>Recette <span class="badge text-bg-secondary">{{ recipe.title}}! ✅</span></h1>
   
-        This friendly message is coming from:
-        <ul>
-            <li>Your controller at <code>/Users/jonathanpiboteau/simfony_react_projet/backend_simfony/src/Controller/HomeController.php</code></li>
-            <li>Your template at <code>/Users/jonathanpiboteau/simfony_react_projet/backend_simfony/templates/home/index.html.twig</code></li>
-        </ul>
+        <h2>Description de la recette</h2>
+        <span> {{ recipe.content }} </span>
     </div>
 {% endblock %}
