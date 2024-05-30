@@ -1,0 +1,23 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% block title %}Hello Administrator!{% endblock %}
+
+{% block body %}
+<title>yo</title>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+
+<div class="example-wrapper">
+    <h1>Choisit ta voie jeune padawan ✅ </h1>
+    <button class="btn btn-danger">
+        <a class="nav-link" href="{{ path('admin.recipe.list') }}">Go To recipe </a>
+    </button>
+    <button class="btn btn-success">
+        <a class="nav-link" href="{{ path('admin.category.index') }}">Go To categories</a>
+    </button>
+
+</div>
+{% endblock %}
