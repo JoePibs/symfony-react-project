@@ -1,15 +1,14 @@
 {% extends 'admin/admin.html.twig' %}
 
-{% block title %}Contact{% endblock %}
+{% block title %}Crée ta categorie  !!{% endblock %}
 
 {% block body %}
 
-<h1>Contacte Nous !!! </h1>
+<h1>Crée ta categorie!!! </h1>
 
 {{ form_start(form)}}
 <div class="d-flex">
-    {{form_row(form.firstname)}}
-    {{form_row(form.lastname)}}
+    {{form_row(form.name)}}
 </div>
 {{ form_end(form)}}
 
