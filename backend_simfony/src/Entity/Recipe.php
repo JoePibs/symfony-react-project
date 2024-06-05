@@ -23,7 +23,7 @@ class Recipe
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 3, max: 255)]
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[a-zA-Z0-9_ ]+$/', message: 'Only letters, numbers and underscores are allowed')]
+    #[Assert\Regex(pattern: "/^[\p{L}0-9\s_-]+$/u", message: 'Only letters, numbers, spaces, hyphens, and underscores are allowed')]
     #[BanWord()]
     private ?string $title = null;
 
