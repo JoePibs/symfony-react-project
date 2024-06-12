@@ -23,13 +23,40 @@ class RecipeRepository extends ServiceEntityRepository
     public function findRecipeWithLowDuration(int $duration): array
     {
         return $this->createQueryBuilder('r')
+            ->select('r', 'c')
             ->andWhere('r.duration < :duration')
             ->setParameter('duration', $duration)
-            ->setMaxResults((5))
+            ->leftJoin('r.category', 'c')
+            ->setMaxResults((20))
             ->orderBy('r.duration', 'ASC')
             ->getQuery()
             ->getResult();
     }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'c')
+            ->leftJoin('r.category', 'c')
+            ->setMaxResults((1000))
+            ->orderBy('r.duration', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllByCategory($slug): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'c')
+            ->leftJoin('r.category', 'c')
+            ->where('c.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->setMaxResults(1000)
+            ->orderBy('r.duration', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Recipe[] Returns an array of Recipe objects
     //     */

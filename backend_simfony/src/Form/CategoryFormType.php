@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Category;
+use App\Entity\Recipe;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,6 +15,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class CategoryFormType extends AbstractType
 {
@@ -26,6 +29,7 @@ class CategoryFormType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => 'Name','empty_data' => ''])
             ->add('slug', HiddenType::class)
+            ->add('recipes', EntityType::class, ['class' => Recipe::class, 'choice_label' => 'title', 'multiple' => true, 'by_reference' => false])
             ->add('save', SubmitType::class, ['label' => 'Save Category'])
             ->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->autoslug('name'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->autodate())

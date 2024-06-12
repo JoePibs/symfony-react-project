@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Recipe as EntityRecipe;
+use App\Entity\Category;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,15 +11,25 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Form\RecipeType;
+use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('admin/recettes', name: 'admin.recipe.')]
 class RecipeController extends AbstractController
 {
+
     #[Route('/', name: 'list')]
-    public function index(Request $request, RecipeRepository $recipeRepository,EntityManagerInterface $entityManagerInterface ): Response
+    public function index(Request $request, RecipeRepository $recipeRepository,EntityManagerInterface $entityManagerInterface, CategoryRepository $categoryRepository ): Response
     {
-        $recipes = $recipeRepository->findAll();
+        $recipes = $recipeRepository->findAll();//$recipeRepository->findAllByCategory($slug);
+        $category = (new Category())
+        ->setUpdatedAt(new \DateTimeImmutable())
+        ->setCreatedAt(new \DateTimeImmutable())
+        ->setName('Poney')
+        ->setSlug('poney');
+        $recipes[0]->setCategory($category);
+        $entityManagerInterface->flush();
 
         return $this->render('admin/recipe/index.html.twig',['recipes' => $recipes]);
     }
@@ -41,19 +52,19 @@ class RecipeController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['GET','POST'], requirements: ['id' => Requirement::DIGITS])]
-    public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface): Response
+    public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface, UploaderHelper $helper): Response
     {
         $form = $this->createForm(RecipeType::class, $recipe);
         $form -> handleRequest($request);
+        $recipePath = $helper->asset($recipe, 'thumbnailFile');
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            $entityManagerInterface->persist($recipe);
+        
             $entityManagerInterface->flush();
             $this->addFlash('success', 'Recipe updated');
 
             return $this->redirectToRoute('admin.recipe.list');
         }
-        Return $this->render('admin/recipe/edit.html.twig', ['recipe' => $recipe, 'form' => $form]);
+        Return $this->render('admin/recipe/edit.html.twig', ['recipe' => $recipe, 'form' => $form, 'recipePath' => $recipePath]);
     }
 
     #[Route('/{id}', name: 'delete',methods: ['DELETE'],requirements: ['id' => Requirement::DIGITS])]
