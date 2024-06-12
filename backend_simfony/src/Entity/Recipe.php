@@ -8,10 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\BanWord;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 #[UniqueEntity('title')]
 #[UniqueEntity('slug')]
+#[Vich\Uploadable()]
 
 class Recipe
 {
@@ -51,8 +54,13 @@ class Recipe
     #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
     private ?Category $category = null;
 
+    #[Vich\UploadableField(mapping:"recettes", fileNameProperty:"thumbnail")]
+    #[Assert\Image()]
+    private ?File $thumbnailFile = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thumbnail = null;
+
 
     public function getId(): ?int
     {
@@ -164,6 +172,17 @@ class Recipe
     {
         $this->thumbnail = $thumbnail;
 
+        return $this;
+    }
+
+    public function getThumbnailFile(): ?File
+    {
+        return $this->thumbnailFile;
+    }
+
+    public function setThumbnailFile(?File $thumbnailFile): static
+    {
+        $this->thumbnailFile = $thumbnailFile;
         return $this;
     }
 }

@@ -37,9 +37,7 @@ class RecipeType extends AbstractType
         ->add('content')
         ->add('duration')
         ->add('ingredients')
-        ->add('thumbnail', FileType::class, ['label' => 'Thumbnail', 'mapped' => false, 'constraints' => [
-            new Image()
-        ]])
+        ->add('thumbnailFile', FileType::class, ['label' => 'Image',])
         ->add('save', SubmitType::class, ['label' => 'Save Recipe'])
         ->addEventListener(FormEvents::PRE_SUBMIT, $this->formListenerFactory->autoslug('title'))
         ->addEventListener(FormEvents::POST_SUBMIT, $this->formListenerFactory->autodate());
