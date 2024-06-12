@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Form\RecipeType;
 use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('admin/recettes', name: 'admin.recipe.')]
 class RecipeController extends AbstractController
@@ -51,24 +52,19 @@ class RecipeController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['GET','POST'], requirements: ['id' => Requirement::DIGITS])]
-    public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface): Response
+    public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface, UploaderHelper $helper): Response
     {
         $form = $this->createForm(RecipeType::class, $recipe);
         $form -> handleRequest($request);
+        $recipePath = $helper->asset($recipe, 'thumbnailFile');
         if ($form->isSubmitted() && $form->isValid()) {
-            /* @var UploadedFile $file */
-            $file = $form->get('thumbnail')->getData();
-            if ($file) {
-                $fileName = $recipe->getId() . '_' . $recipe->getTitle() . '.' . $file->guessExtension();
-                $file->move($this->getParameter('kernel.project_dir').'/public/recettes/images', $fileName);
-                $recipe->setThumbnail($fileName);
-            }
+        
             $entityManagerInterface->flush();
             $this->addFlash('success', 'Recipe updated');
 
             return $this->redirectToRoute('admin.recipe.list');
         }
-        Return $this->render('admin/recipe/edit.html.twig', ['recipe' => $recipe, 'form' => $form]);
+        Return $this->render('admin/recipe/edit.html.twig', ['recipe' => $recipe, 'form' => $form, 'recipePath' => $recipePath]);
     }
 
     #[Route('/{id}', name: 'delete',methods: ['DELETE'],requirements: ['id' => Requirement::DIGITS])]
