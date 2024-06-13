@@ -12,9 +12,9 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Category</th>
+                    <th scope="col">{{knp_pagination_sortable(recipes,'ID','r.id')}}</th>
+                    <th scope="col">Titre</th>
+                    <th scope="col">Categorie</th>
                     <th scope="col">Delete</th>
                     <th scope="col">Edit</th>
                 </tr>
@@ -36,6 +36,7 @@
                 </tbody>
             {% endfor %}
         </table>
+        {{knp_pagination_render(recipes)}}
         <a class="btn btn-primary" href="{{ path('admin.recipe.create') }}">Nouvelle recette</a>
         
     </div>

@@ -15,25 +15,19 @@ use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
-
 #[Route('admin/recettes', name: 'admin.recipe.')]
 #[IsGranted('ROLE_USER')]
 class RecipeController extends AbstractController
 {
 
     #[Route('/', name: 'list')]
-    public function index(Request $request, RecipeRepository $recipeRepository,EntityManagerInterface $entityManagerInterface, CategoryRepository $categoryRepository ): Response
+    public function index(Request $request, RecipeRepository $recipeRepository): Response
     {
-        $recipes = $recipeRepository->findAll();//$recipeRepository->findAllByCategory($slug);
-        $category = (new Category())
-        ->setUpdatedAt(new \DateTimeImmutable())
-        ->setCreatedAt(new \DateTimeImmutable())
-        ->setName('Poney')
-        ->setSlug('poney');
-        $recipes[0]->setCategory($category);
-        $entityManagerInterface->flush();
-
-        return $this->render('admin/recipe/index.html.twig',['recipes' => $recipes]);
+        $page = $request->query->getInt('page', 1);
+        $recipes = $recipeRepository->paginateRecipes($page);
+        return $this->render('admin/recipe/index.html.twig',[
+            'recipes' => $recipes,
+        ]);
     }
 
      #[Route('/create', name: 'create')]
@@ -52,6 +46,7 @@ class RecipeController extends AbstractController
         }
         Return $this->render('admin/recipe/create.html.twig', ['recipe' => $recipe, 'form' => $form]);
     }
+
 
     #[Route('/{id}', name: 'edit', methods: ['GET','POST'], requirements: ['id' => Requirement::DIGITS])]
     public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface, UploaderHelper $helper): Response
