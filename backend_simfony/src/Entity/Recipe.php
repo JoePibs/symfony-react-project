@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\BanWord;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
@@ -21,6 +22,7 @@ class Recipe
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['recipe'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -28,13 +30,16 @@ class Recipe
     #[Assert\NotBlank]
     #[Assert\Regex(pattern: "/^[\p{L}0-9\s_-]+$/u", message: 'Only letters, numbers, spaces, hyphens, and underscores are allowed')]
     #[BanWord()]
+    #[Groups(['recipe'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['detail_recipe'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(min: 10, max: 255)]
+    #[Groups(['detail_recipe'])]
     private ?string $content = null;
 
     #[ORM\Column(nullable: true)]
@@ -43,6 +48,7 @@ class Recipe
     #[ORM\Column(nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Positive]
+    #[Groups(['recipe'])]
     private ?string $duration = null;
 
     #[ORM\Column(nullable: true)]
@@ -52,12 +58,14 @@ class Recipe
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
+    #[Groups(['detail_recipe'])]
     private ?Category $category = null;
 
     #[Vich\UploadableField(mapping:"recettes", fileNameProperty:"thumbnail")]
     #[Assert\Image()]
     private ?File $thumbnailFile = null;
 
+    #[Groups(['detail_recipe'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thumbnail = null;
 

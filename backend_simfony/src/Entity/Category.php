@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -46,7 +47,7 @@ class Category
     {
         return $this->id;
     }
-
+    #[Groups(['detail_recipe'])]
     public function getName(): ?string
     {
         return $this->name;
@@ -98,11 +99,11 @@ class Category
     /**
      * @return Collection<int, Recipe>
      */
+
     public function getRecipes(): Collection
     {
         return $this->recipes;
     }
-
     public function addRecipe(Recipe $recipe): static
     {
         if (!$this->recipes->contains($recipe)) {
