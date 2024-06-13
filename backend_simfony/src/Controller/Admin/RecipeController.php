@@ -13,9 +13,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Form\RecipeType;
 use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('admin/recettes', name: 'admin.recipe.')]
+#[IsGranted('ROLE_USER')]
 class RecipeController extends AbstractController
 {
 
