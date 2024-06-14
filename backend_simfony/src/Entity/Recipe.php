@@ -69,6 +69,9 @@ class Recipe
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thumbnail = null;
 
+    #[ORM\ManyToOne(inversedBy: 'recipes')]
+    private ?user $user = null;
+
 
     public function getId(): ?int
     {
@@ -191,6 +194,18 @@ class Recipe
     public function setThumbnailFile(?File $thumbnailFile): static
     {
         $this->thumbnailFile = $thumbnailFile;
+        return $this;
+    }
+
+    public function getUser(): ?user
+    {
+        return $this->user;
+    }
+
+    public function setUser(?user $user): static
+    {
+        $this->user = $user;
+
         return $this;
     }
 }

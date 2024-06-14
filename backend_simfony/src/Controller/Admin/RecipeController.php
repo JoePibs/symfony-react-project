@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 #[Route('admin/recettes', name: 'admin.recipe.')]
-#[IsGranted('ROLE_USER')]
+
 class RecipeController extends AbstractController
 {
 
@@ -29,7 +29,7 @@ class RecipeController extends AbstractController
             'recipes' => $recipes,
         ]);
     }
-
+#[IsGranted('ROLE_USER','ROLE_ADMIN', 'ROLE_SUPER_ADMIN')]
      #[Route('/create', name: 'create')]
     public function createRecipe(Request $request, EntityManagerInterface $entityManagerInterface): Response
     {
@@ -47,7 +47,7 @@ class RecipeController extends AbstractController
         Return $this->render('admin/recipe/create.html.twig', ['recipe' => $recipe, 'form' => $form]);
     }
 
-
+#[IsGranted('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')]
     #[Route('/{id}', name: 'edit', methods: ['GET','POST'], requirements: ['id' => Requirement::DIGITS])]
     public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface, UploaderHelper $helper): Response
     {
@@ -63,7 +63,7 @@ class RecipeController extends AbstractController
         }
         Return $this->render('admin/recipe/edit.html.twig', ['recipe' => $recipe, 'form' => $form, 'recipePath' => $recipePath]);
     }
-
+#[IsGranted('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')]
     #[Route('/{id}', name: 'delete',methods: ['DELETE'],requirements: ['id' => Requirement::DIGITS])]
     public function deleteRecipe(EntityRecipe $recipe, EntityManagerInterface $entityManagerInterface)
     {
