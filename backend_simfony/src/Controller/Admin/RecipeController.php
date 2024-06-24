@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Form\RecipeType;
 use App\Repository\CategoryRepository;
+use App\Security\Voter\RecipeVoter;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
@@ -21,16 +23,20 @@ class RecipeController extends AbstractController
 {
 
     #[Route('/', name: 'list')]
-    public function index(Request $request, RecipeRepository $recipeRepository): Response
+    #[IsGranted(RecipeVoter::LIST)]
+    public function index(Request $request, RecipeRepository $recipeRepository,Security $security ): Response
     {
         $page = $request->query->getInt('page', 1);
-        $recipes = $recipeRepository->paginateRecipes($page);
+        $userId = $security->getUser()->getId();
+        $canListAll = $security->isGranted(RecipeVoter::LIST_ALL);
+        $recipes = $recipeRepository->paginateRecipes($page, $canListAll ? null : $userId);
         return $this->render('admin/recipe/index.html.twig',[
             'recipes' => $recipes,
         ]);
     }
-#[IsGranted('ROLE_USER','ROLE_ADMIN', 'ROLE_SUPER_ADMIN')]
+
      #[Route('/create', name: 'create')]
+     #[IsGranted(RecipeVoter::CREATE)]
     public function createRecipe(Request $request, EntityManagerInterface $entityManagerInterface): Response
     {
         $recipe = new EntityRecipe();
@@ -47,7 +53,7 @@ class RecipeController extends AbstractController
         Return $this->render('admin/recipe/create.html.twig', ['recipe' => $recipe, 'form' => $form]);
     }
 
-#[IsGranted('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')]
+#[IsGranted(RecipeVoter::EDIT, subject: 'recipe')]
     #[Route('/{id}', name: 'edit', methods: ['GET','POST'], requirements: ['id' => Requirement::DIGITS])]
     public function editRecipe(EntityRecipe $recipe, Request $request, EntityManagerInterface $entityManagerInterface, UploaderHelper $helper): Response
     {
